@@ -10,18 +10,20 @@ import javafx.stage.Stage;
 import java.io.IOException;
 
 public class ChatApplication extends Application
-        implements ConversationViewController.Listener,
-                    LoginViewController.Listener {
-    private ConversationViewController conversationViewController;
+        implements
+        LoginViewController.Listener, ConversationController.Listener {
+    private ConversationController conversationController;
     private LoginViewController loginViewController;
     private Stage loginStage;
-    private Stage conversationStage;
     private String currentUser;
 
     @Override
     public void start(Stage stage) throws IOException {
         loginStage = stage;
         openLoginView();
+        Stage conversationStage = new Stage();
+        conversationStage.setTitle("Conversation");
+        conversationController = new ConversationController(conversationStage, this);
     }
 
     public void openLoginView() throws IOException {
@@ -32,30 +34,9 @@ public class ChatApplication extends Application
         loginStage.show();
     }
 
-    public void openConversationView() throws IOException {
-        if(conversationStage == null) {
-            conversationStage = new Stage();
-            conversationStage.setTitle("Conversation");
-            conversationStage.setOnCloseRequest(windowEvent -> {
-                conversationStage.close();
-                loginStage.show();
-            });
-        }
-
-        conversationViewController = new ConversationViewController();
-        conversationViewController.setListener(this);
-        conversationViewController.openInStage(conversationStage);
-        conversationStage.show();
-
-    }
 
     public static void main(String[] args) {
         launch();
-    }
-
-    @Override
-    public void askToAddMessage(String message) {
-        conversationViewController.addMessageToChat(message);
     }
 
     @Override
@@ -64,9 +45,14 @@ public class ChatApplication extends Application
         System.out.println("Pseudo : " + currentUser);
         loginStage.close();
         try {
-            openConversationView();
+            conversationController.open();
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void onConversationViewClose()  {
+        loginStage.show();
     }
 }
