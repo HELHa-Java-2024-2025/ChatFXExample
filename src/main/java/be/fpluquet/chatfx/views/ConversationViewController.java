@@ -5,8 +5,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
-public class ConversationViewController {
+public class ConversationViewController extends AbstractViewController<ConversationViewController.Listener> {
 
     @FXML
     private TextField messageTextField;
@@ -17,10 +18,10 @@ public class ConversationViewController {
     @FXML
     private Button sendButton;
 
-    private Listener listener;
 
-    public void setListener(Listener listener) {
-        this.listener = listener;
+    @Override
+    protected String getFXMLPath() {
+        return "conversation-view.fxml";
     }
 
     @FXML
@@ -50,6 +51,8 @@ public class ConversationViewController {
             messageTextField.requestFocus();
         }
     }
+
+
 
     public interface Listener {
         void askToAddMessage(String message);
