@@ -1,7 +1,8 @@
-package be.fpluquet.chatfx.views;
+package be.fpluquet.chatfx.client.views;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
 public class LoginViewController extends AbstractViewController<LoginViewController.Listener> {
@@ -11,6 +12,9 @@ public class LoginViewController extends AbstractViewController<LoginViewControl
 
     @FXML
     private TextField pseudoTextField;
+
+    @FXML
+    private Label errorLabel;
 
 
     @Override
@@ -26,6 +30,23 @@ public class LoginViewController extends AbstractViewController<LoginViewControl
                 listener.askToConnect(pseudo);
             }
         });
+        clearError();
+    }
+
+    public void clearError() {
+        errorLabel.setText("");
+    }
+
+    public void showNetworkError() {
+        errorLabel.setText("Une erreur réseau s'est produite. Vérifiez que le serveur est démarré.");
+    }
+
+    public void showConnectionError() {
+        errorLabel.setText("Le serveur n'a pu vous connecter. Veuillez réessayer plus tard.");
+    }
+
+    public void showServerError() {
+        this.showNetworkError();
     }
 
 

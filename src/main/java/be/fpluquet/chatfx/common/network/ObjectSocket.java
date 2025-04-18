@@ -1,4 +1,4 @@
-package be.fpluquet.chatfx.network.common;
+package be.fpluquet.chatfx.common.network;
 
 import java.io.IOException;
 import java.io.ObjectInputStream;

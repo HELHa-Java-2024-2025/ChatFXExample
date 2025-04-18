@@ -1,16 +1,16 @@
-package be.fpluquet.chatfx.network.client;
+package be.fpluquet.chatfx.client.repositories;
 
-import be.fpluquet.chatfx.network.common.ObjectSocket;
+import be.fpluquet.chatfx.common.models.Message;
+import be.fpluquet.chatfx.common.network.ObjectSocket;
 
 public class ReadMessagesThread implements Runnable {
 
     private ObjectSocket objectSocket;
 
-    public interface Listener {
-        void onMessageReceived(String message);
-    }
 
     private Listener listener;
+
+    boolean running = true;
 
     public void setListener(Listener listener) {
         this.listener = listener;
@@ -22,18 +22,27 @@ public class ReadMessagesThread implements Runnable {
     @Override
     public void run() {
         try {
-            while(true) {
+            while(running) {
                 System.out.println("En attente d'un message...");
-                String string = objectSocket.read();
-                System.out.println("Nouveau message depuis le serveur :" + string);
+                Message message = objectSocket.read();
+                System.out.println("Nouveau message depuis le serveur :" + message);
                 if (listener != null) {
-                    listener.onMessageReceived(string);
+                    listener.onMessageReceived(message);
                 }
             }
         } catch (Exception e) {
             System.err.println("Erreur lors de la lecture du message.");
-
+            e.printStackTrace();
         }
 
+    }
+
+    public void stop() {
+        running = false;
+    }
+
+
+    public interface Listener {
+        void onMessageReceived(Message message);
     }
 }

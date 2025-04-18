@@ -1,4 +1,4 @@
-package be.fpluquet.chatfx.views;
+package be.fpluquet.chatfx.client.views;
 
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,11 +9,14 @@ import java.io.IOException;
 
 public abstract class AbstractViewController<ListenerType> {
     public void openInStage(Stage stage) throws IOException {
+        Scene scene = new Scene(this.getRoot());
+        stage.setScene(scene);
+    }
+
+    public Parent getRoot() throws IOException {
         FXMLLoader loader = new FXMLLoader(getClass().getResource(this.getFXMLPath()));
         loader.setController(this);
-        Parent root = loader.load();
-        Scene scene = new Scene(root);
-        stage.setScene(scene);
+        return loader.load();
     }
 
     protected abstract String getFXMLPath();
