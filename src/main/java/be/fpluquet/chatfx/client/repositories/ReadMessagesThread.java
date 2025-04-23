@@ -2,8 +2,12 @@ package be.fpluquet.chatfx.client.repositories;
 
 import be.fpluquet.chatfx.common.models.Message;
 import be.fpluquet.chatfx.common.network.ObjectSocket;
+import be.fpluquet.chatfx.common.network.commands.AbstractCommand;
+import be.fpluquet.chatfx.common.network.commands.ChangeUsernameCommand;
+import be.fpluquet.chatfx.common.network.commands.CommandDispatch;
+import be.fpluquet.chatfx.common.network.commands.SendMessageCommand;
 
-public class ReadMessagesThread implements Runnable {
+public class ReadMessagesThread implements Runnable, CommandDispatch {
 
     private ObjectSocket objectSocket;
 
@@ -24,11 +28,8 @@ public class ReadMessagesThread implements Runnable {
         try {
             while(running) {
                 System.out.println("En attente d'un message...");
-                Message message = objectSocket.read();
-                System.out.println("Nouveau message depuis le serveur :" + message);
-                if (listener != null) {
-                    listener.onMessageReceived(message);
-                }
+                AbstractCommand command = objectSocket.read();
+                command.executeOn(this);
             }
         } catch (Exception e) {
             System.err.println("Erreur lors de la lecture du message.");
@@ -41,8 +42,21 @@ public class ReadMessagesThread implements Runnable {
         running = false;
     }
 
+    @Override
+    public void onCommand(ChangeUsernameCommand c) {
+        if(this.listener != null)
+            this.listener.onChangePseudo(c.getNewUsername(), c.getOldUsername(), c.getUserId());
+    }
+
+    @Override
+    public void onCommand(SendMessageCommand c) {
+        if(this.listener != null)
+            this.listener.onMessageReceived(c.getMessage());
+    }
+
 
     public interface Listener {
         void onMessageReceived(Message message);
+        void onChangePseudo(String newPseudo, String oldPseudo, int userId);
     }
 }

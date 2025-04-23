@@ -20,5 +20,7 @@ module be.fpluquet.chatfx {
     opens be.fpluquet.chatfx.common.models to javafx.fxml;
     exports be.fpluquet.chatfx.common.network;
     opens be.fpluquet.chatfx.common.network to javafx.fxml;
+    exports be.fpluquet.chatfx.client.appController;
+    opens be.fpluquet.chatfx.client.appController to javafx.fxml;
 
 }

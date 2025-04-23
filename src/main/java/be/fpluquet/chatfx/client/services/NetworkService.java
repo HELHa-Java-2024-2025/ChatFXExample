@@ -5,6 +5,8 @@ import be.fpluquet.chatfx.client.repositories.NetworkRepository;
 import be.fpluquet.chatfx.common.models.Message;
 import be.fpluquet.chatfx.common.models.User;
 import be.fpluquet.chatfx.common.network.ObjectSocketCreationException;
+import be.fpluquet.chatfx.common.network.commands.ChangeUsernameCommand;
+import be.fpluquet.chatfx.common.network.commands.SendMessageCommand;
 
 import java.io.IOException;
 
@@ -51,22 +53,41 @@ public class NetworkService implements NetworkRepository.Listener {
         }
     }
 
+    @Override
+    public void onChangePseudo(String newPseudo, String oldPseudo, int userId) {
+        if (listener != null) {
+            listener.onChangePseudo(newPseudo, oldPseudo, userId);
+        }
+    }
+
     private void startChatCommunication() {
         this.networkRepository.startChatCommunication();
     }
 
-    public Message sendMessage(String message) throws IOException {
-        Message msg = new Message(message, this.user);
-        this.networkRepository.sendMessage(msg);
-        return msg;
+    public Message sendMessage(String messageContent) throws IOException {
+        Message message = new Message(messageContent, this.user);
+        this.networkRepository.sendCommand(new SendMessageCommand(message));
+        return message;
     }
 
     public boolean isCurrentUser(User sender) {
-        return this.user.getId().equals(sender.getId());
+        return this.user.getId() == sender.getId();
+    }
+
+    public void changeUsername(String newUsername) throws IOException {
+        try {
+            this.networkRepository.sendCommand(new ChangeUsernameCommand(newUsername, user.getName(), user.getId()));
+            user.setName(newUsername);
+        } catch (IOException e) {
+            System.err.println("Error while sending change username command: " + e.getMessage());
+            throw e;
+        }
     }
 
     public interface Listener {
         void onChatMessageReceived(Message message);
+
+        void onChangePseudo(String newPseudo, String oldPseudo, int userId);
     }
 
 }

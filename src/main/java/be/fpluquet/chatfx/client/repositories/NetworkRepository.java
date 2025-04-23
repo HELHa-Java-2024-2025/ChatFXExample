@@ -6,6 +6,9 @@ import be.fpluquet.chatfx.common.models.User;
 import be.fpluquet.chatfx.common.network.ObjectSocket;
 import be.fpluquet.chatfx.common.network.ObjectSocketCreationException;
 import be.fpluquet.chatfx.common.network.Protocol;
+import be.fpluquet.chatfx.common.network.commands.AbstractCommand;
+import be.fpluquet.chatfx.common.network.commands.ChangeUsernameCommand;
+import be.fpluquet.chatfx.common.network.commands.SendMessageCommand;
 
 import java.io.IOException;
 import java.net.Socket;
@@ -36,6 +39,13 @@ public class NetworkRepository implements ReadMessagesThread.Listener {
         }
     }
 
+    @Override
+    public void onChangePseudo(String newPseudo, String oldPseudo, int userId) {
+        if (listener != null) {
+            listener.onChangePseudo(newPseudo, oldPseudo, userId);
+        }
+    }
+
     public void disconnect() {
         try {
             readMessagesThread.stop();
@@ -59,7 +69,7 @@ public class NetworkRepository implements ReadMessagesThread.Listener {
             this.objectSocket.write(user);
             User userWithId = this.objectSocket.read();
             if (userWithId == null) {
-                throw new ConnectionException("User " + user.getPseudo() + " not connected");
+                throw new ConnectionException("User " + user.getName() + " not connected");
             }
             return userWithId;
         }catch(IOException | ClassNotFoundException e) {
@@ -67,13 +77,15 @@ public class NetworkRepository implements ReadMessagesThread.Listener {
         }
     }
 
-    public void sendMessage(Message msg) throws IOException {
-        this.objectSocket.write(msg);
+
+    public void sendCommand(AbstractCommand command) throws IOException {
+        this.objectSocket.write(command);
     }
 
 
     public interface Listener {
         void onMessageReceived(Message message);
+        void onChangePseudo(String newPseudo, String oldPseudo, int userId);
     }
 
 }

@@ -5,6 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.layout.VBox;
@@ -48,7 +49,13 @@ public class ConversationViewController extends AbstractViewController<Conversat
     private void askToAddMessage() {
         String message = messageTextField.getText();
         if (!message.isEmpty()) {
-            this.listener.askToAddMessage(message);
+            if (message.length() > 1 && message.startsWith("/")) {
+                // login change
+                String newUsername = message.substring(1);
+                this.listener.askToChangeUsername(newUsername);
+            } else {
+                this.listener.askToAddMessage(message);
+            }
             messageTextField.clear();
             messageTextField.requestFocus();
         }
@@ -82,9 +89,17 @@ public class ConversationViewController extends AbstractViewController<Conversat
         }).start();
     }
 
+    public void showChangePseudoNotification(String newPseudo, String oldPseudo, int userId) {
+        Label notificationLabel = new Label();
+        notificationLabel.setText("User " + oldPseudo + " changed his name to " + newPseudo);
+        notificationLabel.setStyle("-fx-text-fill: blue; -fx-font-weight: bold;");
+        messagesVBox.getChildren().add(notificationLabel);
+    }
+
 
     public interface Listener {
         void askToAddMessage(String message);
+        void askToChangeUsername(String newUsername);
     }
 
 }

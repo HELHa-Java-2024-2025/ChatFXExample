@@ -3,15 +3,15 @@ package be.fpluquet.chatfx.common.models;
 import java.io.Serializable;
 
 public class User implements Serializable {
-    private String pseudo;
+    private String name;
     private int id = -1;
 
-    public User(String pseudo) {
-        this.pseudo = pseudo;
+    public User(String name) {
+        this.name = name;
     }
 
-    public String getPseudo() {
-        return pseudo;
+    public String getName() {
+        return name;
     }
 
     public void setId(int id) {
@@ -23,7 +23,11 @@ public class User implements Serializable {
         return id != -1;
     }
 
-    public Object getId() {
+    public int getId() {
         return id;
+    }
+
+    public void setName(String newUsername) {
+        this.name = newUsername;
     }
 }

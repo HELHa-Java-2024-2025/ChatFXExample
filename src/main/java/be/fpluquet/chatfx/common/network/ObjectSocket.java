@@ -38,6 +38,7 @@ public class ObjectSocket {
 
     public void write(Object object) throws IOException {
         this.outStream.writeObject(object);
+        this.outStream.reset();
         this.outStream.flush();
     }
 

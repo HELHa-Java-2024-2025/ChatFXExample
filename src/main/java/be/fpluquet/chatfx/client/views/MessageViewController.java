@@ -27,7 +27,7 @@ public class MessageViewController extends AbstractViewController<MessageViewCon
     public void setMessage(Message message, boolean itsMine) {
         this.message = message;
         this.messageLabel.setText(message.getContent());
-        this.pseudoLabel.setText(message.getSender().getPseudo());
+        this.pseudoLabel.setText(message.getSender().getName());
         if (itsMine) {
             rootVBox.setAlignment(Pos.TOP_RIGHT);
         }
