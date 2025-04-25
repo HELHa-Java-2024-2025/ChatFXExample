@@ -37,13 +37,19 @@ public class ObjectSocket {
     }
 
     public void write(Object object) throws IOException {
-        this.outStream.writeObject(object);
-        this.outStream.reset();
-        this.outStream.flush();
+        synchronized (this.outStream) {
+            this.outStream.reset();
+            System.out.println("write: " + object);
+            this.outStream.writeObject(object);
+            System.out.println("write done");
+            this.outStream.flush();
+        }
     }
 
     public <T> T read() throws IOException, ClassNotFoundException {
-        return (T) this.inStream.readObject();
+        synchronized (this.inStream) {
+            return (T) this.inStream.readObject();
+        }
     }
 
     public void close() {

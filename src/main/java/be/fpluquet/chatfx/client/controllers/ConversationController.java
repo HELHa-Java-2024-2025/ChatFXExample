@@ -31,6 +31,7 @@ public class ConversationController extends AbstractStageController<Conversation
     @Override
     public void askToAddMessage(String message) {
         try {
+            System.out.println("Message to send: " + message);
             Message sentMessage = networkService.sendMessage(message);
             System.out.println("Message sent: " + sentMessage);
         } catch (IOException e) {

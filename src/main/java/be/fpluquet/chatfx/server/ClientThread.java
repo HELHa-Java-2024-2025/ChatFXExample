@@ -36,6 +36,7 @@ public class ClientThread implements Runnable, CommandDispatch {
 
             while(true) {
                 AbstractCommand command = os.read();
+                System.out.println("Un client a envoyé une commande : " + command);
                 if (command == null) {
                     System.out.println("Le client a fermé la connexion.");
                     break;

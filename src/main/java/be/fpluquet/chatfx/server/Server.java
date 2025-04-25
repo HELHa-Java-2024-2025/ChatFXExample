@@ -49,6 +49,7 @@ public class Server {
     public synchronized void broadcast(Object message) {
         for(ClientThread client : clients) {
             try {
+                System.out.println("Envoi du message " + message + " au client " + client);
                 client.write(message);
             } catch (IOException e) {
                 System.err.println("Erreur lors de l'envoi du message au client.");

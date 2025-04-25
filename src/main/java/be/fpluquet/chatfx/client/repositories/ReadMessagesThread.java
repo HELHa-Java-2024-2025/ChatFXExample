@@ -29,6 +29,7 @@ public class ReadMessagesThread implements Runnable, CommandDispatch {
             while(running) {
                 System.out.println("En attente d'un message...");
                 AbstractCommand command = objectSocket.read();
+                System.out.println("Message reçu : " + command);
                 command.executeOn(this);
             }
         } catch (Exception e) {
